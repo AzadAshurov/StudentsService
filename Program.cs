@@ -6,30 +6,73 @@
 //Iq INT NOT NULL
 //)
 
-using System.Data.SqlClient;
-
 namespace StudentsService
 {
     internal class Program
     {
+        private static List<Student> students = new List<Student>();
         static void Main(string[] args)
         {
-            try
+            Student student = new Student("Frog", 10);
+            StudentService studentService = new StudentService();
+            studentService.Add(student);
+            for (int i = 0; i < 100; i++)
             {
-                string connectionString = $"server=DESKTOP-JR023V5\\SQLEXPRESS;database=StudentService;trusted_connection=true;integrated security=true;";
-                SqlConnection connection = new SqlConnection(connectionString);
-                connection.Open();
-                string query = "INSERT INTO Students ([Name], Iq) VALUES ('Tom', 150), ('Frog', 10)";
-                SqlCommand command = new SqlCommand(query, connection);
-                int result = command.ExecuteNonQuery();
-                Console.WriteLine(result);
-                connection.Close();
-            }
-            catch
-            {
-                Console.WriteLine("Razval sssr");
+                Student studentcloning = new Student($"Test{i}", 10 * i % 140 + 10);
+                studentService.Add(studentcloning);
             }
 
+
+
+
+
+            studentService.Delete(4);
+            //Overload
+            studentService.Delete(5, 100);
+            //Can work like this
+            studentService.Delete(150, 30);
+            //Work even like this
+            studentService.Delete(-23, 30);
+
+
+
+
+
+
+
+
+
+
+
+            //Warning!!!!! Code in below comment is dangerous(Console beep warning and warning of epilepsy!!!)
+            //studentService.Delete(-150, -30);
+
+
+
+
+
+
+
+            Student student2 = new Student("Mahoraga", 150);
+            studentService.Update(6, student2);
+
+            students = studentService.GetAll();
+            foreach (var item in students)
+            {
+                Console.WriteLine(item);
+            }
+
+            Student studentFromSql = studentService.GetById(17);
+            if (studentFromSql != null)
+            {
+                Console.WriteLine($"Name {studentFromSql.Name} and his Iq {studentFromSql.Iq}");
+            }
+            else
+            {
+                Console.WriteLine("No student with this id");
+            }
         }
+
+
     }
 }
